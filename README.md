@@ -14,6 +14,21 @@ var md = require('markdown-it')({
 }).use(require('markdown-it-video')); // <-- this use(package_name) is required
 ```
 
+#### For use in the Web Browser 
+
+Embed the script, either by hosting it yourself or using a CDN like rawgit.
+
+```html
+<script src="markdown-it-video.js"></script>
+```
+
+Then make markdown-it use the module.
+
+```js 
+var md =  window.markdownIt().use(window.markdownitVideo);
+```
+
+The module should work just fine.
 #### Example
 
 This only works in the inline style.
