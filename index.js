@@ -1,5 +1,6 @@
 // Process @[youtube](youtubeVideoID)
 // Process @[vimeo](vimeoVideoID)
+// Process @[vine](vineVideoID)
 
 'use strict';
 
@@ -25,6 +26,16 @@ function vimeo_parser(url){
     }
 }
 
+function vine_parser(url){
+    var regExp = /^.*(vine\.co\/)v\/([a-zA-Z0-9]{1,13}).*/;
+    var match = url.match(regExp);
+    if (match){
+        return match[2];
+    } else{
+        return url;
+    }
+}
+
 function video_embed(md) {
     function video_return(state, silent) {
         var code,
@@ -39,8 +50,7 @@ function video_embed(md) {
             oldPos = state.pos,
             max = state.posMax;
 
-        // When we add more services, (youtube) might be (youtube|vimeo|vine), for example
-        var EMBED_REGEX = /@\[(youtube|vimeo)\]\([\s]*(.*?)[\s]*[\)]/im;
+        var EMBED_REGEX = /@\[(youtube|vimeo|vine)\]\([\s]*(.*?)[\s]*[\)]/im;
 
 
         if (state.src.charCodeAt(state.pos) !== 0x40/* @ */) {
@@ -67,6 +77,8 @@ function video_embed(md) {
             videoID = youtube_parser(videoID);
         } else if (service.toLowerCase() == 'vimeo') {
             videoID = vimeo_parser(videoID);
+        } else if (service.toLowerCase() == 'vine') {
+            videoID = vine_parser(videoID);
         }
 
         // If the videoID field is empty, regex currently make it the close parenthesis.
@@ -107,32 +119,31 @@ function video_embed(md) {
     return video_return;
 }
 
-function tokenize_youtube(videoID) {
-    var embedStart = '<div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" id="ytplayer" type="text/html" width="640" height="390" src="//www.youtube.com/embed/';
-    var embedEnd = '" frameborder="0"></iframe></div>';
-    return embedStart + videoID + embedEnd;
+function video_url(service, videoID, options) {
+    switch (service) {
+        case 'youtube':
+            return '//www.youtube.com/embed/' + videoID;
+        case 'vimeo':
+            return '//player.vimeo.com/video/' + videoID;
+        case 'vine':
+            return '//vine.co/v/' + videoID + '/embed/' + options.vine.embed;
+    }
 }
 
-function tokenize_vimeo(videoID) {
-    var embedStart = '<div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" id="vimeoplayer" width="500" height="281" src="//player.vimeo.com/video/';
-    var embedEnd = '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>';
-    return embedStart + videoID + embedEnd;
-}
-
-function tokenize_video(md) {
-    function tokenize_return(tokens, idx, options, env, self) {
+function tokenize_video(md, options) {
+    function tokenize_return(tokens, idx, mdopts, env, self) {
         var videoID = md.utils.escapeHtml(tokens[idx].videoID);
-        var service = md.utils.escapeHtml(tokens[idx].service);
+        var service = md.utils.escapeHtml(tokens[idx].service).toLowerCase();
         if (videoID === '') {
             return '';
         }
 
-        if (service.toLowerCase() === 'youtube') {
-            return tokenize_youtube(videoID);
-        } else if (service.toLowerCase() === 'vimeo') {
-            return tokenize_vimeo(videoID);
-        } else{
-            return('');
+        switch (service) {
+            case 'youtube':
+            case 'vimeo':
+            case 'vine':
+                return '<div class="embed-responsive"><iframe class="embed-responsive-item embed-responsive-16by9" id="' + service + 'player" width="' + (options[service].width) + '" height="' + (options[service].height) + '" src="' + options.url(service, videoID, options) + '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>';
+            default: return '';
         }
 
     }
@@ -140,7 +151,21 @@ function tokenize_video(md) {
     return tokenize_return;
 }
 
-module.exports = function video_plugin(md) {
-    md.renderer.rules.video = tokenize_video(md);
+var defaults = {
+    url: video_url,
+    youtube: { width: 640, height: 390 },
+    vimeo: { width: 500, height: 281 },
+    vine: { width: 600, height: 600, embed: 'simple' }
+}
+
+module.exports = function video_plugin(md, options) {
+    if (options) {
+        Object.keys(defaults).forEach(function(key) {
+            if (typeof options[key] === 'undefined') {
+                options[key] = defaults[key];
+            }
+        })
+    } else options = defaults;
+    md.renderer.rules.video = tokenize_video(md, options);
     md.inline.ruler.before('emphasis', 'video', video_embed(md));
 }
