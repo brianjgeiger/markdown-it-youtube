@@ -1,0 +1,10 @@
+Coverage. Without 'width' and 'height' attributes
+.
+@[youtube](dQw4w9WgXcQ)
+.
+<p><div class="embed-responsive embed-responsive-service-youtube embed-responsive-16by9"><iframe class="embed-responsive-item" id="youtubeplayer" type="text/html" src="//www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div></p>
+.
+.
+@[vimeo](x)
+.
+<p><div class="embed-responsive embed-responsive-service-vimeo embed-responsive-16by9"><iframe class="embed-responsive-item" id="vimeoplayer" type="text/html" src="//player.vimeo.com/video/x" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div></p>

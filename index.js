@@ -121,19 +121,56 @@ function tokenize_video(md, options) {
   function tokenize_return(tokens, idx) {
     var videoID = md.utils.escapeHtml(tokens[idx].videoID);
     var service = md.utils.escapeHtml(tokens[idx].service).toLowerCase();
-    return videoID === '' ? '' :
-      '<div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" id="' +
-      service + 'player" type="text/html" width="' + (options[service].width) +
-      '" height="' + (options[service].height) +
-      '" src="' + options.url(service, videoID, options) +
-      '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>';
+
+    if (videoID === '') {
+      return '';
+    }
+
+    var blockClassNames = [
+      options.blockName,
+      options.blockName + options.modifierDelimiter + 'service-' + service
+    ];
+    if (options.modifierName) {
+      blockClassNames.push(options.blockName + options.modifierDelimiter + options.modifierName);
+    }
+
+    var itemClassName = options.blockName + options.elementDelimiter + 'item';
+
+    var html =
+      '<div class="' + blockClassNames.join(' ') + '">' +
+        '<iframe class="' + itemClassName;
+
+    if (options.outputPlayerId === true) {
+      html += '" id="' + service + 'player';
+    }
+
+    if (options.outputPlayerSize === true) {
+      html += '" width="' + (options[service].width) +
+              '" height="' + (options[service].height);
+    }
+
+    html +=   '" type="text/html' +
+              '" src="' + options.url(service, videoID, options) +
+              '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen>' +
+        '</iframe>' +
+      '</div>';
+
+    return html;
   }
 
   return tokenize_return;
 }
 
 var defaults = {
+  outputPlayerId: true,
+  outputPlayerSize: true,
+  elementDelimiter: '-',
+  modifierDelimiter: '-',
+  blockName: 'embed-responsive',
+  modifierName: '16by9',
+
   url: video_url,
+
   youtube: { width: 640, height: 390 },
   vimeo: { width: 500, height: 281 },
   vine: { width: 600, height: 600, embed: 'simple' },
