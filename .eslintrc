@@ -4,6 +4,7 @@
   "extends": "airbnb",
   "rules": {
     "no-var": 0,
+    "vars-on-top": 0,
     "prefer-destructuring": 0,
     "prefer-template": 0,
     "prefer-arrow-callback": [0],
