@@ -3,6 +3,7 @@
 // Process @[vine](vineVideoID)
 // Process @[prezi](preziID)
 // Process @[osf](guid)
+// Process @[local](url)
 
 const ytRegex = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
 function youtubeParser(url) {
@@ -74,6 +75,8 @@ function videoEmbed(md, options) {
       videoID = preziParser(videoID);
     } else if (serviceLower === 'osf') {
       videoID = mfrParser(videoID);
+    } else if (serviceLower === 'local') {
+      // videoID = videoID;
     } else if (!options[serviceLower]) {
       return false;
     }
@@ -176,6 +179,8 @@ function videoUrl(service, videoID, url, options) {
         'landing_sign=1kD6c0N6aYpMUS0wxnQjxzSqZlEB8qNFdxtdjYhwSuI';
     case 'osf':
       return 'https://mfr.osf.io/render?url=https://osf.io/' + videoID + '/?action=download';
+    case 'local':
+      return videoID;
     default:
       return service;
   }
@@ -202,6 +207,18 @@ function tokenizeVideo(md, options) {
         '    }); </script>';
     }
 
+    if (service === 'local' && videoID) {
+      const localPlayerAttrs = [];
+
+      const keys = Object.keys(options[service]);
+      const values = Object.values(options[service]);
+
+      for (let i = 0; i < keys.length; i += 1) {
+        localPlayerAttrs.push(keys[i] + '="' + values[i] + '"');
+      }
+      return '<video ' + localPlayerAttrs.join(' ') + '><source src="' + videoID + '" type="video/webm" /></video>';
+    }
+
     return videoID === '' ? '' :
       '<div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item ' +
       service + '-player" type="text/html" width="' + (options[service].width) +
@@ -220,6 +237,7 @@ const defaults = {
   vine: { width: 600, height: 600, embed: 'simple' },
   prezi: { width: 550, height: 400 },
   osf: { width: '100%', height: '100%' },
+  local: { controls: true, allowfullscreen: true },
 };
 
 module.exports = function videoPlugin(md, options) {

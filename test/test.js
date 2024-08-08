@@ -32,6 +32,10 @@ describe('markdown-it-video: options', function () {
         autoplay: 0,
       },
     },
+    local: {
+      controls: false,
+      allowfullscreen: false,
+    },
   });
   var renderedHtml;
 
@@ -43,6 +47,11 @@ describe('markdown-it-video: options', function () {
   it('overwrite parameter', function () {
     renderedHtml = md.render('@[youtube](youtube.com/embed/0zM3nApSvMg?autoplay=1&rel=0)');
     assert.equal(renderedHtml, '<p><div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item youtube-player" type="text/html" width="640" height="390" src="https://www.youtube-nocookie.com/embed/0zM3nApSvMg?autoplay=0&rel=0&fs=0" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div></p>\n');
+  });
+
+  it('local options', function () {
+    renderedHtml = md.render('@[local](test_video.webm)');
+    assert.equal(renderedHtml, '<p><video controls="false" allowfullscreen="false"><source src="test_video.webm" type="video/webm" /></video></p>\n');
   });
 });
 
