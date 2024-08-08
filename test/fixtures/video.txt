@@ -401,6 +401,13 @@ Coverage. Prezi from URL
 <p><div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item prezi-player" type="text/html" width="550" height="400" src="https://prezi.com/embed/1kkxdtlp4241/?bgcolor=ffffff&amp;lock_to_path=0&amp;autoplay=0&amp;autohide_ctrls=0&amp;landing_data=bHVZZmNaNDBIWnNjdEVENDRhZDFNZGNIUE43MHdLNWpsdFJLb2ZHanI5N1lQVHkxSHFxazZ0UUNCRHloSXZROHh3PT0&amp;landing_sign=1kD6c0N6aYpMUS0wxnQjxzSqZlEB8qNFdxtdjYhwSuI" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div></p>
 .
 
+Coverage. Local from URL
+.
+@[local](test_video.webm)
+.
+<p><video controls="true" allowfullscreen="true"><source src="test_video.webm" type="video/webm" /></video></p>
+.
+
 Coverage. Line Breaks
 .
 @[vine](MhQ2lvg29Un) @[vine](MhQ2lvg29Un)

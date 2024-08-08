@@ -137,6 +137,22 @@ Alternately, you could use the url.
 @[osf](https://mfr.osf.io/render?url=https://osf.io/kuvg9/?action=download)
 ```
 
+#### Local video
+
+This mode results in default HTML5 video player using the given url as source.
+The url can point to external source or something relative for current path.
+
+```md
+@[local](test_video.webm)
+```
+
+is interpreted as
+
+```html
+<p><video controls="true" allowfullscreen="true"><source src="test_video.webm" /></video></p>
+```
+
+
 ## Options
 
 ```js
